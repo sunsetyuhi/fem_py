@@ -314,13 +314,13 @@ if __name__ == '__main__':
     func_f = 1.0  #定数関数f
 
     #左部(x=x_min)、右部(x=x_max)、下部(y=y_min)、上部(y=y_max)の、境界の種類と値
-    #境界の種類はNone,Dirichlet,Neumann
+    #境界の種類はDirichlet,Neumann
     BC_left = ['Dirichlet', 0.0]
-    BC_right = ['Dirichlet', 0.0]
-    BC_bottom = ['None', 0.0]
-    BC_top = ['None', 0.0]
+    BC_right = ['Neumann', -1.0]
+    BC_bottom = ['Neumann', 0.0]
+    BC_top = ['Neumann', 0.0]
 
-    node_type = ['lattice', 5]  #節点の生成方法。lattice,random
+    node_type = ['lattice', 10]  #節点の生成方法。lattice,random
     #node_type = ['random', 100]  #節点の生成方法。lattice,random
     matrix_type = 'sparse'  #全体行列の形式。basic,sparse
 
@@ -359,4 +359,4 @@ if __name__ == '__main__':
     print ("Calculation time: {:0.5f}[sec]".format(compute_time))
 
     #計算結果を表示(ポストプロセス)。番号などの有無(True,False)、グラフの表示方法(show,save)
-    visualize_result(show_result_text=True, result_out_type='show')  #計算結果を表示
+    visualize_result(show_result_text=False, result_out_type='show')  #計算結果を表示
