@@ -67,8 +67,8 @@ def assemble_element_matrix(nod_num_seg, nod_pos_seg):
     print(length)
 
     #要素行列の初期化
-    mat_A_ele = np.zeros((len(nod_num_seg),3,3), np.float64)  #要素係数行列(ゼロで初期化)
-    vec_b_ele = np.zeros((len(nod_num_seg),3), np.float64)  #要素係数ベクトル(ゼロで初期化)
+    mat_A_ele = np.zeros((len(nod_num_seg),2,2), np.float64)  #要素係数行列(ゼロで初期化)
+    vec_b_ele = np.zeros((len(nod_num_seg),2), np.float64)  #要素係数ベクトル(ゼロで初期化)
 
     #要素行列の各成分を計算
     print("Local matrix")
@@ -99,20 +99,40 @@ def assemble_global_matrix(mat_A_ele, vec_b_ele):
     return mat_A_glo, vec_b_glo
 
 
-def set_boundary_condition(mat_A_glo, vec_b_glo):
-    print("Boundary conditions")
-    #boundary(mat_A_glo, vec_b_glo, 0, alpha, 0.0) #左端はディリクレ境界
-    #boundary(mat_A_glo, vec_b_glo, node_total-1, "inf", beta) #右端はノイマン境界
+#境界要素の情報を設定
+def make_boundary_info(nod_pos_seg):
+    BC_type = [""]*2
+    BC_value = [""]*2
 
-    #ディリクレ境界条件
-    vec_b_glo[:] -= BC_left[1]*mat_A_glo[0,:]  #定数ベクトルに行の値を移項
-    vec_b_glo[0] = BC_left[1]  #関数を任意の値で固定
-    mat_A_glo[0,:] = 0.0  #行を全て0にする
-    mat_A_glo[:,0] = 0.0  #列を全て0にする
-    mat_A_glo[0,0] = 1.0  #対角成分は1にする
+    #左側境界
+    BC_type[0] = BC_left[0]
+    BC_value[0] = BC_left[1]
 
-    #ノイマン境界条件
-    vec_b_glo[len(nod_pos_glo)-1] += BC_right[1] #関数を任意の傾きで固定
+    #右側境界
+    BC_type[1] = BC_right[0]
+    BC_value[1] = BC_right[1]
+
+    print('BC_type =\n', BC_type)
+
+    return BC_type, BC_value
+
+
+#境界条件を実装
+def set_boundary_condition(mat_A_glo, vec_b_glo, BC_type, BC_value):
+    BC_nod = [0,len(nod_pos_glo)-1]
+
+    #各要素の各節点に対応したGlobal節点に対して処理する
+    print('Boundary conditions')
+    for n in range(2):
+        if(BC_type[n]=='Dirichlet'):
+            vec_b_glo[:] -= BC_value[n]*mat_A_glo[BC_nod[n], :]  #移項
+            vec_b_glo[BC_nod[n]] = BC_value[n]  #関数を任意の値で固定
+            mat_A_glo[BC_nod[n], :] = 0.0  #行を全て0にする
+            mat_A_glo[:, BC_nod[n]] = 0.0  #列を全て0にする
+            mat_A_glo[BC_nod[n], BC_nod[n]] = 1.0  #対角成分は1にする
+
+        if (BC_type[n]=='Neumann'):  #Neumann境界条件の処理
+            vec_b_glo[BC_nod[n]] += BC_value[n]  #関数を任意の傾きで固定
 
     print("Post global matrix")
     print(np.concatenate((mat_A_glo, np.reshape(vec_b_glo, (-1,1))), axis=1))
@@ -221,8 +241,8 @@ if __name__ == '__main__':
     BC_left = ['Dirichlet', 0.0]
     BC_right = ['Neumann', 1.0]
 
-    #node_type = ['lattice', 10]  #格子点配置、格子分割におけるx・y方向の節点数
-    node_type = ['random', 10]  #ランダム配置、ランダム分割における節点数
+    node_type = ['lattice', 10]  #格子点配置、格子分割におけるx・y方向の節点数
+    #node_type = ['random', 5]  #ランダム配置、ランダム分割における節点数
 
     #節点データ生成。Global節点座標、線分要素の節点番号
     nod_pos_glo, nod_num_seg = generate_nodes(node_type)
@@ -245,8 +265,11 @@ if __name__ == '__main__':
     #全体方程式の構築
     mat_A_glo, vec_b_glo = assemble_global_matrix(mat_A_ele, vec_b_ele)
 
+    #境界要素の情報を設定
+    BC_type, BC_value = make_boundary_info(nod_pos_seg)
+
     #境界条件を実装
-    mat_A_glo, vec_b_glo = set_boundary_condition(mat_A_glo, vec_b_glo)
+    mat_A_glo, vec_b_glo = set_boundary_condition(mat_A_glo, vec_b_glo, BC_type, BC_value)
 
     #連立方程式を解く
     unknown_vec_u = solve_simultaneous_equations(mat_A_glo, vec_b_glo)
@@ -256,4 +279,4 @@ if __name__ == '__main__':
     print ("Calculation time: {:0.5f}[sec]".format(compute_time))
 
     #計算結果を表示(ポストプロセス)。番号などの有無(True,False)、グラフの表示方法(show,save)
-    visualize_result(nod_pos_glo, unknown_vec_u, show_text=True, out_type='show')
+    visualize_result(nod_pos_glo, unknown_vec_u, show_text=False, out_type='show')
