@@ -3,13 +3,8 @@
 #境界条件： u(x_min)=alpha,  du(x_max)/dx=beta
 import time  #時刻を扱うライブラリ
 import numpy as np  #数値計算用
-import scipy.spatial  #ドロネー分割
 import scipy.linalg  #SciPyの線形計算ソルバー
-import scipy.sparse  #圧縮行列の処理
-import scipy.sparse.linalg  #圧縮行列用ソルバー
 import matplotlib.pyplot as plt  #グラフ作成
-from mpl_toolkits.mplot3d import Axes3D  #3Dグラフ
-from matplotlib import cm  #カラーマップ
 
 
 #節点データを生成
@@ -148,10 +143,6 @@ def set_boundary_condition(mat_A_glo, mat_B_glo, BC_type, BC_value):
             mat_A_glo[BC_nod[n], :] = 0.0  #行を全て0にする
             mat_A_glo[:, BC_nod[n]] = 0.0  #列を全て0にする
             mat_A_glo[BC_nod[n], BC_nod[n]] = 1.0  #対角成分は1にする
-
-            #mat_B_glo[BC_nod[n], :] = 0.0  #行を全て0にする
-            #mat_B_glo[:, BC_nod[n]] = 0.0  #列を全て0にする
-            #mat_B_glo[BC_nod[n], BC_nod[n]] = 1.0  #対角成分は1にする
 
     print('Post global matrix A')
     for i in range(min(len(nod_pos_glo),10)):   #全体行列を10行10列まで確認
