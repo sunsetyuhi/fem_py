@@ -242,7 +242,7 @@ if __name__ == '__main__':
     BC_right = ['Neumann', 1.0]
 
     node_type = ['lattice', 10]  #格子点配置、格子分割におけるx・y方向の節点数
-    #node_type = ['random', 5]  #ランダム配置、ランダム分割における節点数
+    #node_type = ['random', 10]  #ランダム配置、ランダム分割における節点数
 
     #節点データ生成。Global節点座標、線分要素の節点番号
     nod_pos_glo, nod_num_seg = generate_nodes(node_type)
