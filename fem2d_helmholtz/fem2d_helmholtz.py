@@ -1,6 +1,6 @@
 #2次元Helmholtz方程式を、有限要素法で解く
-#偏微分方程式： -∇・[p(x,y)∇u(x,y)] +q(x,y)u(x,y) = f(x,y)  (in Ω)
-#境界条件： u(x,y)=alpha  (in Γ1),  du(x,y)/dx=beta  (in Γ2)
+#偏微分方程式： ∇・[p(x,y)∇u(x,y)] +q(x,y)u(x,y) = 0.0  (in Ω)
+#境界条件： u(x,y)=alpha  (on Γ1),  du(x,y)/dx=beta  (on Γ2)
 import time  #時刻を扱うライブラリ
 import numpy as np  #数値計算用
 import scipy.spatial  #ドロネー分割
@@ -241,7 +241,7 @@ def set_boundary_condition(mat_A_glo, mat_B_glo, BC_type, BC_value, leng_seg):
 
 
 #連立方程式を解く
-def solve_simultaneous_equations(mat_A_glo, vec_b_glo):
+def solve_simultaneous_equations(mat_A_glo, mat_B_glo):
     print('節点数、三角形要素数、境界線分要素数')
     print(len(nod_pos_glo), len(nod_pos_tri), len(nod_pos_seg))
 
@@ -257,7 +257,8 @@ def solve_simultaneous_equations(mat_A_glo, vec_b_glo):
     print("Unkown vector U =\n", unknown_vec_u)  #未知数ベクトル
 
     print("N_Eig = ", np.count_nonzero(eigenvalues))  #非ゼロの固有値の個数
-    print("eigenvalues_nonzero =\n", np.where(0.000001<abs(eigenvalues)))  #固有値の非ゼロ成分
+    eigenvalues_nonzero = eigenvalues[np.where(0.000001<abs(eigenvalues))]
+    print("eigenvalues_nonzero =\n", eigenvalues_nonzero)  #固有値の非ゼロ成分
 
     return unknown_vec_u, eigenvalues
 
@@ -314,7 +315,7 @@ def visualize_result(nod_pos_glo, unknown_vec_u, show_text=False, out_type='show
         ax = fig.add_subplot(plot_num[0], plot_num[1], i+1, projection='3d', azim=-120, elev=30)
         #ax.set_title("Eig={:0.5f}".format(eigenvalues[count]))
         ax.set_title("k={:0.5f}".format( np.sqrt(eigenvalues[count]) ))
-        surf = ax.plot_trisurf(nod_pos_glo[:,0],nod_pos_glo[:,1],unknown_vec_u[:,count], cmap=cm.jet, linewidth=0)
+        ax.plot_trisurf(nod_pos_glo[:,0],nod_pos_glo[:,1],unknown_vec_u[:,count], cmap=cm.jet, linewidth=0)
         count += 1
     plt.tight_layout()  #余白を調整
     plt.subplots_adjust(left=None, bottom=0.05, right=None, top=0.9, wspace=0.1, hspace=0.3)  #余白を調整
@@ -352,7 +353,7 @@ if (__name__=='__main__'):
 
     #節点の生成方法。lattice,random
     node_type = ['lattice', 30]  #数字は格子分割におけるx・y方向の節点数
-    #node_type = ['random', 50]  #数字はランダム分割における節点数
+    #node_type = ['random', 1000]  #数字はランダム分割における節点数
     matrix_type = 'basic'  #全体行列の形式。basic,sparse
 
     #節点データ生成。Global節点座標、三角形要素の節点番号、境界線分要素の節点番号
