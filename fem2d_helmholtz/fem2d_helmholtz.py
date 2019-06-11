@@ -1,5 +1,5 @@
 #2次元Helmholtz方程式を、有限要素法で解く
-#偏微分方程式： ∇・[p(x,y)∇u(x,y)] +q(x,y)u(x,y) = 0.0  (in Ω)
+#偏微分方程式： ∇・[p(x,y)∇u(x,y)] +q(x,y)u(x,y) = f(x,y)  (in Ω)
 #境界条件： u(x,y)=alpha  (on Γ1),  du(x,y)/dx=beta  (on Γ2)
 import time  #時刻を扱うライブラリ
 import numpy as np  #数値計算用
