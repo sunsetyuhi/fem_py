@@ -1,6 +1,6 @@
 #2次元Poisson方程式を、有限要素法で解く
-#偏微分方程式： -∇・[p(x,y)∇u(x,y)] = f(x,y)  (in Ω)
-#境界条件： u(x,y)=alpha  (in Γ1),  du(x,y)/dx=beta  (in Γ2)
+#偏微分方程式： ∇・[p(x,y)∇u(x,y)] = f(x,y)  (in Ω)
+#境界条件： u(x,y)=alpha  (on Γ1),  du(x,y)/dx=beta  (on Γ2)
 import time  #時刻を扱うライブラリ
 import numpy as np  #数値計算用
 import scipy.spatial  #ドロネー分割
