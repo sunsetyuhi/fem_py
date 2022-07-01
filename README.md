@@ -5,7 +5,7 @@ Those are FEM (finite element method) programs written in Python 3. To run these
 ここにあるのは、Python3で書いた有限要素法プログラムです。これらのプログラムを実行するには、SciPyとMatplotlibもインストールする必要があります。
 
 
-# 解きたい問題（1次元問題）
+# 解きたい問題（1次元問題の例）
 
 　次式はPoisson（ポアソン）方程式と呼ばれる微分方程式で、熱伝導や物質拡散、静電場（静磁場）や<a href="https://teenaka.at.webry.info/201704/article_7.html">重力場</a>、引張圧縮応力、<a href="https://takun-physics.net/10186/">非圧縮性流れ</a>などを考える時に登場します。
  
